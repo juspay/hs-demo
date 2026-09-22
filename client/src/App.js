@@ -5,6 +5,7 @@ import APIResponsePanel from './components/APIResponsePanel';
 import RecurringCharge from './flows/RecurringCharge';
 import RecurringChargeNTID from './flows/RecurringChargeNTID';
 import RecurringChargePSP from './flows/RecurringChargePSP';
+import AccountUpdater from './flows/AccountUpdater';
 import Readme from './flows/Readme';
 import Import3DSResults from './flows/Import3DSResults';
 import Standalone3DS from './flows/Standalone3DS';
@@ -65,6 +66,7 @@ const App = () => {
         { id: 'recurring_charge', name: 'Recurring Charge', description: 'Charge using saved payment method' },
         { id: 'recurring_charge_ntid', name: 'Recurring Charge with Network Transaction ID', description: 'Charge using NTID with card entry' },
         { id: 'recurring_charge_psp', name: 'Recurring Charge with PSP Token', description: 'Charge using PSP mandate token' },
+        { id: 'account_updater', name: 'Account Updater', description: 'Save a card, charge it off-session later, see the refreshed card details' },
         { id: 'three_ds_psp', name: 'Authenticate with 3DS via PSP', description: '3D Secure authentication via PSP' },
         { id: 'three_ds_import', name: 'Import 3D Secure Results', description: 'Import existing 3DS authentication' },
         { id: 'three_ds_standalone', name: 'Standalone 3D Secure', description: 'Standalone 3DS via Hyperswitch' },
@@ -101,7 +103,7 @@ const App = () => {
   useEffect(() => {
     // Skip HyperLoader for flows that don't depend on window.Hyper
     const flowId = new URLSearchParams(window.location.search).get('flow');
-    if (flowId === 'embedded_components') {
+    if (flowId === 'embedded_components' || flowId === 'account_updater') {
       setIsLoading(false);
       return;
     }
@@ -250,6 +252,8 @@ const App = () => {
                 <RecurringChargeNTID key={currentFlow.id} />
               ) : currentFlow.id === 'recurring_charge_psp' ? (
                 <RecurringChargePSP key={currentFlow.id} />
+              ) : currentFlow.id === 'account_updater' ? (
+                <AccountUpdater key={currentFlow.id} />
               ) : currentFlow.id === 'three_ds_import' ? (
                 <Import3DSResults key={currentFlow.id} />
               ) : currentFlow.id === 'three_ds_standalone' ? (

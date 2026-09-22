@@ -120,29 +120,34 @@ app.get('/api/embedded/hyperswitch', async (req, res) => {
 app.post('/api/create-customer', async (req, res) => {
   try {
     const creds = getCredentials(req);
-    
+
     if (creds.isDebugMode && !creds.secretKey) {
       return res.status(400).json({ error: 'Debug credentials not provided' });
     }
-    
+
     const customerData = {
+      merchant_reference_id: 'demo_' + Date.now(),
       name: 'Customer ' + Date.now(),
       email: 'customer' + Date.now() + '@example.com',
-      phone: '9999999999',
-      phone_country_code: '+1',
     };
 
-    const response = await fetch(`${creds.serverUrl}/customers`, {
+    // The generic /customers route is deprecated on this merchant; /v1/customers
+    // with Authorization: api-key=<key> + X-Profile-Id is the working route.
+    const response = await fetch(`${creds.serverUrl}/v1/customers`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'api-key': creds.secretKey,
+        'Authorization': `api-key=${creds.secretKey}`,
+        'X-Profile-Id': creds.profileId,
       },
       body: JSON.stringify(customerData),
     });
 
     const data = await response.json();
+    if (data.id && !data.customer_id) {
+      data.customer_id = data.id;
+    }
     res.json(data);
   } catch (error) {
     console.error('Error creating customer:', error);
@@ -287,40 +292,6 @@ app.get('/api/payment/:id', async (req, res) => {
     res.json(data);
   } catch (error) {
     console.error('Error fetching payment:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Create customer endpoint (simplified)
-app.post('/api/create-customer', async (req, res) => {
-  try {
-    const creds = getCredentials(req);
-    
-    if (creds.isDebugMode && !creds.secretKey) {
-      return res.status(400).json({ error: 'Debug credentials not provided' });
-    }
-    
-    const customerData = {
-      name: 'Customer ' + Date.now(),
-      email: 'customer' + Date.now() + '@example.com',
-      phone: '9999999999',
-      phone_country_code: '+1',
-    };
-
-    const response = await fetch(`${creds.serverUrl}/customers`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'api-key': creds.secretKey,
-      },
-      body: JSON.stringify(customerData),
-    });
-
-    const data = await response.json();
-    res.json(data);
-  } catch (error) {
-    console.error('Error creating customer:', error);
     res.status(500).json({ error: error.message });
   }
 });
