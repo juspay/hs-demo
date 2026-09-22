@@ -6,23 +6,25 @@ import { apiResponseState } from '../utils/atoms';
 // Built for the sales team to show what Account Updater enables without
 // depending on live sandbox credentials, connectors, or card entry.
 
-const CUSTOMER_ID = 'cus_demo_account_updater';
-const PROFILE_ID = 'pro_demo9f21ac04b3';
+// Every id below is a literal placeholder token, matching how Hyperswitch's
+// own API reference docs show these calls - not a real or realistic-looking
+// account/customer/payment id.
+const CUSTOMER_ID = '<customer_id>';
+const PROFILE_ID = '<profile_id>';
+const PAYMENT_ID = '<payment_id>';
+const PAYMENT_METHOD_ID = '<payment_method_id>';
+const NETWORK_TRANSACTION_ID = '<network_transaction_id>';
 const AMOUNT = 10000;
 const CURRENCY = 'USD';
 
-// All IDs, card numbers, issuer names and identifiers below are made up for
-// this demo - dummy, non-sensitive test values, not tied to any real card,
+// Card numbers, issuer names, and outcome copy below are made up for this
+// demo - dummy, non-sensitive test values, not tied to any real card,
 // customer, or merchant account.
 const SCENARIOS = [
   {
     id: 'account_updated',
     label: 'Mastercard: Account Updated',
     network: 'Mastercard',
-    paymentMethodId: 'pm_7f3ac2e1b7d84c1a',
-    citPaymentId: 'pay_9f3ac2e1b7d84c1a',
-    mitPaymentId: 'pay_2c88a10f45b6e9d3',
-    networkTransactionId: '618469555279852',
     cardType: 'CREDIT',
     cardIssuer: 'CAPITAL ONE',
     cardIssuingCountry: 'UNITEDSTATES',
@@ -36,10 +38,6 @@ const SCENARIOS = [
     id: 'expiry_updated',
     label: 'Visa: Expiry Updated',
     network: 'Visa',
-    paymentMethodId: 'pm_a184e6c02f5b91da',
-    citPaymentId: 'pay_a184e6c02f5b91da',
-    mitPaymentId: 'pay_5e01d9c3b7a24f88',
-    networkTransactionId: '502938471029384',
     cardType: 'CREDIT',
     cardIssuer: 'CHASE BANK',
     cardIssuingCountry: 'UNITEDSTATES',
@@ -63,7 +61,7 @@ const cardObject = (s, cardState) => ({
 });
 
 const buildCitResponse = (s) => ({
-  payment_id: s.citPaymentId,
+  payment_id: PAYMENT_ID,
   status: 'succeeded',
   amount: AMOUNT,
   net_amount: AMOUNT,
@@ -73,13 +71,13 @@ const buildCitResponse = (s) => ({
   customer_id: CUSTOMER_ID,
   payment_method: 'card',
   payment_method_data: { card: cardObject(s, s.before) },
-  payment_method_id: s.paymentMethodId,
+  payment_method_id: PAYMENT_METHOD_ID,
   payment_method_status: 'active',
   is_stored_credential: true,
 });
 
 const buildMitResponse = (s) => ({
-  payment_id: s.mitPaymentId,
+  payment_id: PAYMENT_ID,
   status: 'succeeded',
   amount: AMOUNT,
   net_amount: AMOUNT,
@@ -90,16 +88,16 @@ const buildMitResponse = (s) => ({
   off_session: true,
   payment_method: 'card',
   payment_method_data: { card: cardObject(s, s.after) },
-  payment_method_id: s.paymentMethodId,
-  network_transaction_id: s.networkTransactionId,
+  payment_method_id: PAYMENT_METHOD_ID,
+  network_transaction_id: NETWORK_TRANSACTION_ID,
   payment_method_status: 'active',
   is_stored_credential: true,
   payment_method_tokenization_details: {
-    payment_method_id: s.paymentMethodId,
+    payment_method_id: PAYMENT_METHOD_ID,
     payment_method_status: 'active',
     psp_tokenization: false,
     network_tokenization: false,
-    network_transaction_id: s.networkTransactionId,
+    network_transaction_id: NETWORK_TRANSACTION_ID,
     is_eligible_for_mit_payment: true,
   },
 });
@@ -248,13 +246,13 @@ const AccountUpdater = () => {
                 return_url: 'https://merchant.example.com/return',
               },
             },
-            response: { payment_id: scenario.citPaymentId, status: 'requires_payment_method' },
+            response: { payment_id: PAYMENT_ID, status: 'requires_payment_method' },
           },
           {
             title: 'Step 2: Save Card — Confirm CIT',
             request: {
               method: 'POST',
-              url: `/payments/${scenario.citPaymentId}/confirm`,
+              url: `/payments/${PAYMENT_ID}/confirm`,
               body: {
                 payment_method: 'card',
                 payment_method_data: {
@@ -308,7 +306,7 @@ const AccountUpdater = () => {
                 profile_id: PROFILE_ID,
                 customer_id: CUSTOMER_ID,
                 off_session: true,
-                recurring_details: { type: 'payment_method_id', data: scenario.paymentMethodId },
+                recurring_details: { type: 'payment_method_id', data: PAYMENT_METHOD_ID },
               },
             },
             response: buildMitResponse(scenario),
