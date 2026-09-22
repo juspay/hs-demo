@@ -50,6 +50,12 @@ module.exports = {
     historyApiFallback: true,
     proxy: [
       {
+        context: ['/hsdemo'],
+        target: 'http://localhost:5252',
+        changeOrigin: true,
+        pathRewrite: { '^/hsdemo/api': '' },
+      },
+      {
         context: ['/api', '/config', '/urls'],
         target: 'http://localhost:5252',
         changeOrigin: true,

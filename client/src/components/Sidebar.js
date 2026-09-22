@@ -25,6 +25,7 @@ const flowCategories = [
       { id: 'recurring_charge', name: 'Recurring Charge', description: 'Charge using saved payment method' },
       { id: 'recurring_charge_ntid', name: 'Recurring Charge with Network Transaction ID', description: 'Charge using NTID with card entry', disabled: true },
       { id: 'recurring_charge_psp', name: 'Recurring Charge with PSP Token', description: 'Charge using PSP mandate token' },
+      { id: 'account_updater', name: 'Account Updater', description: 'Save a card, charge it off-session later, see the refreshed card details' },
     ],
   },
   {
