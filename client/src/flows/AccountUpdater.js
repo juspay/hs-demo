@@ -11,6 +11,9 @@ const PROFILE_ID = 'pro_demo9f21ac04b3';
 const AMOUNT = 10000;
 const CURRENCY = 'USD';
 
+// All IDs, card numbers, issuer names and identifiers below are made up for
+// this demo - dummy, non-sensitive test values, not tied to any real card,
+// customer, or merchant account.
 const SCENARIOS = [
   {
     id: 'account_updated',

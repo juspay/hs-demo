@@ -296,6 +296,40 @@ app.get('/api/payment/:id', async (req, res) => {
   }
 });
 
+// Create customer endpoint (simplified)
+app.post('/api/create-customer', async (req, res) => {
+  try {
+    const creds = getCredentials(req);
+
+    if (creds.isDebugMode && !creds.secretKey) {
+      return res.status(400).json({ error: 'Debug credentials not provided' });
+    }
+
+    const customerData = {
+      name: 'Customer ' + Date.now(),
+      email: 'customer' + Date.now() + '@example.com',
+      phone: '9999999999',
+      phone_country_code: '+1',
+    };
+
+    const response = await fetch(`${creds.serverUrl}/customers`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'api-key': creds.secretKey,
+      },
+      body: JSON.stringify(customerData),
+    });
+
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    console.error('Error creating customer:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Create recurring charge (server-side, no SDK)
 app.post('/api/create-recurring-charge', async (req, res) => {
   try {
