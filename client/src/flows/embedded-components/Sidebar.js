@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Home, CreditCard, Plug, Banknote, ShieldAlert,
+  Home, CreditCard, Undo2, Plug, Banknote, ShieldAlert,
   Users, Package, Settings,
 } from 'lucide-react';
 
@@ -20,14 +20,15 @@ const NavItem = ({ icon: Icon, label, active = false, indent = false, disabled =
   );
 };
 
-const Sidebar = () => (
+const Sidebar = ({ active }) => (
   <aside className="ec-dash-sidebar">
     <nav className="ec-dash-nav">
       <NavItem icon={Home} label="Home" disabled />
 
       <div className="ec-nav-section-label">Payments</div>
-      <NavItem icon={CreditCard} label="Transactions" indent disabled />
-      <NavItem icon={Plug} label="Connectors" active indent />
+      <NavItem icon={CreditCard} label="Payments" active={active === 'payments'} indent disabled={active !== 'payments'} />
+      <NavItem icon={Undo2} label="Refunds" active={active === 'refunds'} indent disabled={active !== 'refunds'} />
+      <NavItem icon={Plug} label="Connectors" active={active === 'connectors'} indent disabled={active !== 'connectors'} />
       <NavItem icon={Banknote} label="Payouts" indent disabled />
       <NavItem icon={ShieldAlert} label="Disputes" indent disabled />
 

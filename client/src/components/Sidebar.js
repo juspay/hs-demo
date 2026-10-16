@@ -126,7 +126,9 @@ const flowCategories = [
     name: 'Embedded',
     icon: LayoutDashboard,
     flows: [
-      { id: 'embedded_components', name: 'Connectors Onboarding', description: 'Hyperswitch dashboard components embedded via the embeddable SDK' },
+      { id: 'embedded_components', name: 'Connectors', description: 'Hyperswitch connector configuration embedded via the embeddable SDK' },
+      { id: 'embedded_payments', name: 'Payments', description: 'Hyperswitch payments list and details embedded via the embeddable SDK' },
+      { id: 'embedded_refunds', name: 'Refunds', description: 'Hyperswitch refunds list and details embedded via the embeddable SDK' },
     ],
   },
 ];

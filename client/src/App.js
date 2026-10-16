@@ -30,6 +30,13 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { currentFlowState, apiResponseState, hyperState, themeState } from './utils/atoms';
 import API_BASE_URL from './config';
 
+// Flow id -> component rendered by the embeddable SDK
+const EMBEDDED_FLOWS = {
+  embedded_components: 'connectors',
+  embedded_payments: 'payments',
+  embedded_refunds: 'refunds',
+};
+
 const App = () => {
   const [currentFlow, setCurrentFlow] = useRecoilState(currentFlowState);
   const [apiResponse, setApiResponse] = useRecoilState(apiResponseState);
@@ -89,7 +96,9 @@ const App = () => {
         { id: 'organization_manager', name: 'Organization Manager', description: 'Mock organization structure and merchant management' },
         { id: 'decision_engine', name: 'Decision Engine', description: 'Success rate-based dynamic routing simulation' },
         { id: 'sdk_customization', name: 'SDK Customization', description: 'Customize checkout appearance, layout, and behavior' },
-        { id: 'embedded_components', name: 'Connectors Onboarding', description: 'Hyperswitch dashboard components embedded via the embeddable SDK' },
+        { id: 'embedded_components', name: 'Connectors', description: 'Hyperswitch connector configuration embedded via the embeddable SDK' },
+        { id: 'embedded_payments', name: 'Payments', description: 'Hyperswitch payments list and details embedded via the embeddable SDK' },
+        { id: 'embedded_refunds', name: 'Refunds', description: 'Hyperswitch refunds list and details embedded via the embeddable SDK' },
       ];
       
       const flow = allFlows.find(f => f.id === flowId);
@@ -103,7 +112,7 @@ const App = () => {
   useEffect(() => {
     // Skip HyperLoader for flows that don't depend on window.Hyper
     const flowId = new URLSearchParams(window.location.search).get('flow');
-    if (flowId === 'embedded_components' || flowId === 'account_updater') {
+    if (EMBEDDED_FLOWS[flowId] || flowId === 'account_updater') {
       setIsLoading(false);
       return;
     }
@@ -216,7 +225,7 @@ const App = () => {
 
   return (
     <Layout onFlowSelect={handleFlowSelect} currentFlow={currentFlow}>
-      {currentFlow?.id === 'readme' || currentFlow?.id === 'organization_manager' || currentFlow?.id === 'decision_engine' || currentFlow?.id === 'sdk_customization' || currentFlow?.id === 'embedded_components' ? (
+      {currentFlow?.id === 'readme' || currentFlow?.id === 'organization_manager' || currentFlow?.id === 'decision_engine' || currentFlow?.id === 'sdk_customization' || EMBEDDED_FLOWS[currentFlow?.id] ? (
         <div className="w-full">
           {currentFlow.id === 'readme' ? (
             <Readme key={currentFlow.id} />
@@ -224,8 +233,8 @@ const App = () => {
             <OrganizationManager key={currentFlow.id} />
           ) : currentFlow.id === 'decision_engine' ? (
             <DecisionEnginePlayground key={currentFlow.id} />
-          ) : currentFlow.id === 'embedded_components' ? (
-            <EmbeddedComponents key={currentFlow.id} />
+          ) : EMBEDDED_FLOWS[currentFlow.id] ? (
+            <EmbeddedComponents key={currentFlow.id} component={EMBEDDED_FLOWS[currentFlow.id]} />
           ) : (
             <SDKCustomization key={currentFlow.id} hyper={hyper} />
           )}
