@@ -1,15 +1,43 @@
 import React, { useEffect, useState } from 'react';
 import { loadHyperswitch } from '@juspay-tech/hyperswitch-control-center-embed-core';
-import { HyperswitchProvider, ConnectorConfiguration } from '@juspay-tech/hyperswitch-control-center-embed-react';
+import { HyperswitchProvider, ConnectorConfiguration, Payments, Refunds } from '@juspay-tech/hyperswitch-control-center-embed-react';
 import { ArrowLeft, ArrowRight, RotateCw, Lock, Code2, ChevronRight } from 'lucide-react';
 import API_BASE_URL from '../../config';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import './embedded-components.css';
 
-const MOCK_URL = 'dashboard.merchant.example.com/payments/connectors';
+const EMBED_URL = 'https://app.hyperswitch.io';
 
-const EmbeddedComponents = () => {
+const COMPONENTS = {
+  connectors: {
+    Component: ConnectorConfiguration,
+    mockUrl: 'dashboard.merchant.example.com/payments/connectors',
+    tabTitle: 'Payment Connectors — Dashboard',
+    breadcrumb: 'Connectors',
+    title: 'Payment Connectors',
+    subtitle: 'Connect and manage the payment processors used to settle transactions on your account.',
+  },
+  payments: {
+    Component: Payments,
+    mockUrl: 'dashboard.merchant.example.com/payments/transactions',
+    tabTitle: 'Payments — Dashboard',
+    breadcrumb: 'Payments',
+    title: 'Payments',
+    subtitle: 'Search, filter and inspect every payment processed on your account.',
+  },
+  refunds: {
+    Component: Refunds,
+    mockUrl: 'dashboard.merchant.example.com/payments/refunds',
+    tabTitle: 'Refunds — Dashboard',
+    breadcrumb: 'Refunds',
+    title: 'Refunds',
+    subtitle: 'Track the status of refunds issued against your payments.',
+  },
+};
+
+const EmbeddedComponents = ({ component = 'connectors' }) => {
+  const { Component, mockUrl, tabTitle, breadcrumb, title, subtitle } = COMPONENTS[component];
   const [errorMessage, setErrorMessage] = useState(null);
   const [hyperswitchInstance, setHyperswitchInstance] = useState(null);
 
@@ -65,7 +93,7 @@ const EmbeddedComponents = () => {
             </div>
             <div className="ec-url-bar">
               <Lock size={11} className="ec-url-lock" />
-              <span className="ec-url-text">{MOCK_URL}</span>
+              <span className="ec-url-text">{mockUrl}</span>
             </div>
             <div className="ec-browser-chrome-right" aria-hidden="true" />
           </div>
@@ -73,7 +101,7 @@ const EmbeddedComponents = () => {
           <div className="ec-browser-tabbar">
             <div className="ec-browser-tab ec-browser-tab-active">
               <span className="ec-favicon" />
-              <span className="ec-tab-title">Payment Connectors — Dashboard</span>
+              <span className="ec-tab-title">{tabTitle}</span>
             </div>
           </div>
 
@@ -81,18 +109,15 @@ const EmbeddedComponents = () => {
             <div className="ec-dash">
               <Header />
               <div className="ec-dash-body">
-                <Sidebar />
+                <Sidebar active={component} />
                 <main className="ec-dash-main">
                   <div className="ec-breadcrumb">
                     <span>Payments</span>
                     <ChevronRight size={12} className="ec-breadcrumb-sep" />
-                    <span className="ec-breadcrumb-current">Connectors</span>
+                    <span className="ec-breadcrumb-current">{breadcrumb}</span>
                   </div>
-                  <h1 className="ec-page-title">Payment Connectors</h1>
-                  <p className="ec-page-subtitle">
-                    Connect and manage the payment processors used to settle transactions
-                    on your account.
-                  </p>
+                  <h1 className="ec-page-title">{title}</h1>
+                  <p className="ec-page-subtitle">{subtitle}</p>
 
                   <div className="ec-embed-wrap">
                     <div className="ec-embed-badge">
@@ -108,7 +133,7 @@ const EmbeddedComponents = () => {
                       )}
                       {hyperswitchInstance && (
                         <HyperswitchProvider hyperswitchInstance={hyperswitchInstance}>
-                          <ConnectorConfiguration url="https://app.hyperswitch.io" />
+                          <Component url={EMBED_URL} />
                         </HyperswitchProvider>
                       )}
                     </div>
